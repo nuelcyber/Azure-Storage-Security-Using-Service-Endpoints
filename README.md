@@ -9,7 +9,7 @@ The objective is to ensure that:
 - Only resources from a designated private subnet can access the storage account.
 - Resources outside the approved subnet are denied access.
 
-All resources in this lab were deployed in the **East US** region.
+All resources in this lab were deployed in the **West US** region.
 
 ---
 
@@ -35,7 +35,8 @@ In this lab, I completed the following:
 ### Virtual Network Configuration
 - **VNet Name:** `myVirtualNetwork`
 - **Address Space:** 10.0.0.0/16
-- **Region:** East US
+- **Region:** West US
+
 
 ### Subnets
 | Subnet Name | Address Range   | Purpose |
@@ -43,7 +44,13 @@ In this lab, I completed the following:
 | Public      | 10.0.0.0/24     | Internet-access VM |
 | Private     | 10.0.1.0/24     | Restricted storage access |
 
----
+
+<p align="center"><strong>Figure 1: Virtual Network Architecture with Public and Private Subnets</strong></p>
+
+<p align="center">
+  <img src="images/ASS1.png" width="700" height="400">
+</p>
+
 
 ## Network Security Group Configuration
 
@@ -53,28 +60,58 @@ In this lab, I completed the following:
 - ✅ Allow traffic to Azure Storage (Service Tag: Storage)
 - ❌ Deny outbound traffic to Internet
 
+<p align="center"><strong>Figure 2: NSG Outbound Rules for the Private Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS2.png" width="700" height="400">
+</p>
+
+
 **Inbound Rules**
 - ✅ Allow RDP (Port 3389) for testing
+
+<p align="center"><strong>Figure 3: NSG Inbound Rules for the Private Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS3.png" width="700" height="400">
+</p>
+
+<p align="center"><strong>Figure 4: Associating the myNSGPrivate to the Private Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS4.png" width="700" height="400">
+</p>
 
 **Result:**
 - Private VM can access Storage.
 - Private VM cannot access the Internet.
 
----
-
+   
 ### NSG for Public Subnet (`myNsgPublic`)
 
 **Inbound Rules**
 - ✅ Allow RDP (Port 3389)
 
+<p align="center"><strong>Figure 5: NSG Inbound Rules for the Public Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS5.png" width="700" height="400">
+</p>
+
 **Outbound Rules**
 - Default rules apply (Internet allowed).
+
+<p align="center"><strong>Figure 6: Associating the myNSGPublic to the Public Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS6.png" width="700" height="400">
+</p>
 
 **Result:**
 - Public VM has Internet access.
 - Public VM cannot access Storage (denied).
 
----
+
 
 ## Storage Account Configuration
 
@@ -84,7 +121,23 @@ In this lab, I completed the following:
 - **Public Network Access:** Enabled from selected networks only
 - **Allowed Network:** Private subnet only
 
----
+<p align="center"><strong>Figure 7: Storage Account Configuration</strong></p>
+
+<p align="center">
+  <img src="images/ASS7.png" width="700" height="400">
+</p>
+
+<p align="center"><strong>Figure 8: File Share Configuration for Storage Account</strong></p>
+
+<p align="center">
+  <img src="images/ASS8.png" width="700" height="400">
+</p>
+
+<p align="center"><strong>Figure 9: Enabling service endpoint for the Private Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS9.png" width="700" height="400">
+</p>
 
 ## Virtual Machines Deployed
 
@@ -93,12 +146,27 @@ In this lab, I completed the following:
 | myVmPrivate  | Private  | Storage access test |
 | myVmPublic   | Public   | Access denial validation |
 
+
+<p align="center"><strong>Figure 10: Creating a Virtual Machine in the Private Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS12.png" width="700" height="400">
+</p>
+
+
+<p align="center"><strong>Figure 11: Creating a Virtual Machine in the Public Subnet</strong></p>
+
+<p align="center">
+  <img src="images/ASS11.png" width="700" height="400">
+</p>
+
+
 Both VMs:
 - Windows Server 2022 Datacenter: Azure Edition
 - Standard HDD disk
 - Deployed in East US
 
----
+
 
 ## Validation Tests
 
