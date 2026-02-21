@@ -150,7 +150,7 @@ In this lab, I completed the following:
 <p align="center"><strong>Figure 10: Creating a Virtual Machine in the Private Subnet</strong></p>
 
 <p align="center">
-  <img src="images/ASS12.png" width="700" height="400">
+  <img src="images/ASS10.png" width="700" height="400">
 </p>
 
 
