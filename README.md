@@ -11,7 +11,6 @@ The objective is to ensure that:
 
 All resources in this lab were deployed in the **West US** region.
 
----
 
 ## Lab Objectives
 
@@ -28,12 +27,11 @@ In this lab, I completed the following:
 7. Validated access from the Private subnet (Allowed)
 8. Validated access from the Public subnet (Denied)
 
----
 
 ## Architecture Summary
 
 ### Virtual Network Configuration
-- **VNet Name:** `myVirtualNetwork`
+- **VNet Name:** myVirtualNetwork
 - **Address Space:** 10.0.0.0/16
 - **Region:** West US
 
@@ -57,8 +55,8 @@ In this lab, I completed the following:
 ### NSG for Private Subnet (`myNsgPrivate`)
 
 **Outbound Rules**
-- ✅ Allow traffic to Azure Storage (Service Tag: Storage)
-- ❌ Deny outbound traffic to Internet
+- Allow traffic to Azure Storage (Service Tag: Storage)
+- Deny outbound traffic to Internet
 
 <p align="center"><strong>Figure 2: NSG Outbound Rules for the Private Subnet</strong></p>
 
@@ -68,7 +66,7 @@ In this lab, I completed the following:
 
 
 **Inbound Rules**
-- ✅ Allow RDP (Port 3389) for testing
+- Allow RDP (Port 3389) for testing
 
 <p align="center"><strong>Figure 3: NSG Inbound Rules for the Private Subnet</strong></p>
 
@@ -90,7 +88,7 @@ In this lab, I completed the following:
 ### NSG for Public Subnet (`myNsgPublic`)
 
 **Inbound Rules**
-- ✅ Allow RDP (Port 3389)
+- Allow RDP (Port 3389)
 
 <p align="center"><strong>Figure 5: NSG Inbound Rules for the Public Subnet</strong></p>
 
@@ -117,7 +115,7 @@ In this lab, I completed the following:
 
 - **Performance:** Standard (General-purpose v2)
 - **Redundancy:** Locally Redundant Storage (LRS)
-- **File Share Name:** `my-file-share`
+- **File Share Name:** my-file-share
 - **Public Network Access:** Enabled from selected networks only
 - **Allowed Network:** Private subnet only
 
@@ -133,7 +131,7 @@ In this lab, I completed the following:
   <img src="images/ASS8.png" width="700" height="400">
 </p>
 
-<p align="center"><strong>Figure 9: Enabling service endpoint for the Private Subnet</strong></p>
+<p align="center"><strong>Figure 9: Enabling Service Endpoint for the Private Subnet</strong></p>
 
 <p align="center">
   <img src="images/ASS9.png" width="700" height="400">
@@ -150,7 +148,7 @@ In this lab, I completed the following:
 <p align="center"><strong>Figure 10: Creating a Virtual Machine in the Private Subnet</strong></p>
 
 <p align="center">
-  <img src="images/ASS10.png" width="700" height="400">
+  <img src="images/ASS12.png" width="700" height="400">
 </p>
 
 
@@ -164,64 +162,85 @@ In this lab, I completed the following:
 Both VMs:
 - Windows Server 2022 Datacenter: Azure Edition
 - Standard HDD disk
-- Deployed in East US
+- Deployed in West US
 
 
 
 ## Validation Tests
 
-### ✅ Test 1: Private VM Access to Storage
+### Test 1: Private VM Access to Storage
 
-Using PowerShell:
+<p align="center"><strong>Figure 12: RDP connection to the Private VM</strong></p>
 
-```powershell
-Test-NetConnection -ComputerName <storage_account_name>.file.core.windows.net -Port 445
-```
+<p align="center">
+  <img src="images/ASS16.png" width="700" height="400">
+</p>
 
-Drive mapping script:
 
-```powershell
-$connectTestResult = Test-NetConnection -ComputerName <storage_account_name>.file.core.windows.net -Port 445
-if ($connectTestResult.TcpTestSucceeded) {
-   cmd.exe /C "cmdkey /add:`"<storage_account_name>.file.core.windows.net`" /user:`"localhost\<storage_account_name>`"  /pass:`"<storage_account_key>`""
-   New-PSDrive -Name Z -PSProvider FileSystem -Root "\\<storage_account_name>.file.core.windows.net\my-file-share" -Persist
-} else {
-   Write-Error -Message "Unable to reach the Azure storage account."
-}
-```
+Established a network drive connection to Azure File Storage through PowerShell
+
+<p align="center"><strong>Figure 13: Mapping drive to Azure File Storage through PowerShell on the Private VM</strong></p>
+
+<p align="center">
+  <img src="images/ASS13.png" width="700" height="400">
+</p>
+
+
+<p align="center"><strong>Figure 14: Successfully Mapping drive to Azure File Storage</strong></p>
+
+<p align="center">
+  <img src="images/ASS14.png" width="700" height="400">
+</p>
+
 
 **Result:**
 - Z: drive successfully mapped.
 - Storage access confirmed.
 
-Internet connectivity test:
+## Internet connectivity test:
 
-```powershell
-Test-NetConnection -ComputerName www.bing.com -Port 80
-```
+<p align="center"><strong>Figure 15: Denied Internet Connectivity from the Private VM </strong></p>
 
-**Result:** ❌ Failed (Internet blocked)
+<p align="center">
+  <img src="images/ASS15.png" width="700" height="400">
+</p>
 
----
 
-### ❌ Test 2: Public VM Access to Storage
+
+**Result:** Failed (Internet blocked)
+
+
+### Test 2: Public VM Access to Storage
+
+<p align="center"><strong>Figure 16: RDP connection to the Public VM</strong></p>
+
+<p align="center">
+  <img src="images/ASS17.png" width="700" height="400">
+</p>
 
 Attempted same PowerShell mapping script.
 
+<p align="center"><strong>Figure 17: Failed Drive Mapping to Azure File Storage through PowerShell on the Public VM </strong></p>
+
+<p align="center">
+  <img src="images/ASS18.png" width="700" height="400">
+</p>
+
 **Result:**
-```
-New-PSDrive : Access is denied
-```
 
-Internet connectivity test:
+Access is denied
 
-```powershell
-Test-NetConnection -ComputerName www.bing.com -Port 80
-```
 
-**Result:** ✅ Successful (Internet allowed)
+## Internet connectivity test:
 
----
+<p align="center"><strong>Figure 18: Successful Internet Connectivity from the Public VM</strong></p>
+
+<p align="center">
+  <img src="images/ASS19.png" width="700" height="400">
+</p>
+
+**Result:** Successful (Internet allowed)
+
 
 ## Key Security Concepts Demonstrated
 
@@ -234,7 +253,6 @@ Test-NetConnection -ComputerName www.bing.com -Port 80
 - Outbound traffic restriction
 - Subnet-level access control
 
----
 
 ## Real-World Significance
 
@@ -248,17 +266,15 @@ This lab simulates real enterprise cloud security controls where:
 
 Service Endpoints ensure that traffic to Azure Storage stays within Microsoft’s secure backbone network rather than traversing the public internet.
 
----
 
 ## Lessons Learned
 
 - Service endpoints are configured at the subnet level.
 - Storage firewall rules must align with subnet configuration.
-- NSG outbound rules can override default Internet access.
+- NSG outbound rules can override the default Internet access.
 - Subnet design is critical for secure architecture.
 - Access validation testing is essential in cloud deployments.
 
----
 
 ## Skills Demonstrated
 
@@ -270,7 +286,6 @@ Service Endpoints ensure that traffic to Azure Storage stays within Microsoft’
 - Cloud security troubleshooting
 - Implementing Zero Trust network principles
 
----
 
 ## Conclusion
 
